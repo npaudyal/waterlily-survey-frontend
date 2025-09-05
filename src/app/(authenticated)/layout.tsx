@@ -1,3 +1,4 @@
+import { syncUser } from "@/lib/user-actions";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
@@ -8,9 +9,11 @@ export default async function RootLayout({
     children: React.ReactNode;
 }>) {
 
-    // const { userId } = await auth();
+    const { userId } = await auth();
 
-    // if (!userId) redirect('/');
+    if (!userId) redirect('/');
+
+    await syncUser();
 
     return (
         <div className="min-h-screen bg-gray-100">
