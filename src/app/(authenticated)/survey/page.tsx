@@ -25,15 +25,6 @@ export default async function SurveyPage() {
     return (
         <div className="min-h-screen bg-gray-100 py-8">
             <div className="max-w-4xl mx-auto px-4">
-                <div className="text-center bm-12">
-                    <h1 className="text-4xl font-bold text-gray-900 mb-4">
-                        {survey.name}
-                    </h1>
-                    <p className="text-gray-600 text-lg mx-auto">
-                        {survey.description}
-                    </p>
-                </div>
-
                 <SurveyForm survey={survey} />
             </div>
         </div>
