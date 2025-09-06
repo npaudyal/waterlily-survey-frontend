@@ -1,11 +1,11 @@
 import Link from 'next/link';
-import { auth } from '@clerk/nextjs/server';
+import { validateAuth } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 
 export default async function Home() {
-  const { userId } = await auth();
+  const user = await validateAuth();
 
-  if (userId) {
+  if (user) {
     redirect('/dashboard');
   }
 
