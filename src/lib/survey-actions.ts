@@ -1,6 +1,6 @@
 'use server';
 
-import { auth } from '@clerk/nextjs/server';
+import { cookies } from 'next/headers';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
 
@@ -26,19 +26,14 @@ export async function submitSurvey(
     surveyId: string,
     answers: any
 ) {
-    const { getToken } = await auth();
-    const token = await getToken();
-
-    if (!token) {
-        return { error: 'Not authenticated' };
-    }
-
     try {
+        const cookieStore = await cookies();
+        
         const response = await fetch(`${API_URL}/survey/submit`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
+                'Cookie': cookieStore.toString()
             },
             body: JSON.stringify({ surveyId, answers })
         });
@@ -57,18 +52,12 @@ export async function submitSurvey(
 }
 
 export async function getUserSubmission() {
-
-    const { getToken } = await auth();
-    const token = await getToken();
-
-    if (!token) {
-        return { error: 'Not authenticated' };
-    }
-
     try {
+        const cookieStore = await cookies();
+        
         const response = await fetch(`${API_URL}/survey/submission`, {
             headers: {
-                'Authorization': `Bearer ${token}`
+                'Cookie': cookieStore.toString()
             },
         });
 
@@ -86,4 +75,3 @@ export async function getUserSubmission() {
         return { error: 'Failed to fetch user submission' };
     }
 }
-

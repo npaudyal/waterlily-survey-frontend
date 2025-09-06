@@ -1,21 +1,16 @@
 'use server';
 
-import { auth } from '@clerk/nextjs/server';
+import { cookies } from 'next/headers';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
 
 export async function syncUser() {
-    const { getToken } = await auth();
-    const token = await getToken();
-
-    if (!token) {
-        return { error: 'Not authenticated' };
-    }
-
     try {
-        const response = await fetch(`${API_URL}/auth/me`, {
+        const cookieStore = await cookies();
+        
+        const response = await fetch(`${API_URL}/auth/profile`, {
             headers: {
-                'Authorization': `Bearer ${token}`
+                'Cookie': cookieStore.toString()
             }
         });
 
