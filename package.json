@@ -9,7 +9,6 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@clerk/nextjs": "^6.31.9",
     "@headlessui/react": "^2.2.7",
     "@heroicons/react": "^2.2.0",
     "next": "15.5.2",
