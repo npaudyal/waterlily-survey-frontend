@@ -12,9 +12,10 @@ interface SurveyQuestionProps {
     question: Question;
     value: any;
     onChange: (value: any) => void;
+    questionNumber?: number;
 }
 
-export default function SurveyQuestion({ question, value, onChange }: SurveyQuestionProps) {
+export default function SurveyQuestion({ question, value, onChange, questionNumber }: SurveyQuestionProps) {
     const renderInput = () => {
         const props = { question, value, onChange };
 
@@ -55,12 +56,14 @@ export default function SurveyQuestion({ question, value, onChange }: SurveyQues
     };
 
     return (
-        <div className="space-y-3">
-            <label className="block text-sm font-medium text-gray-900">
+        <div className="group">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
                 {question.text}
                 {question.required && <span className="text-red-500 ml-1">*</span>}
             </label>
-            {renderInput()}
+            <div className="relative">
+                {renderInput()}
+            </div>
         </div>
     );
 }

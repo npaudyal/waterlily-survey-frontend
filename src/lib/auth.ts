@@ -1,3 +1,4 @@
+'use server';
 import { cookies } from 'next/headers';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
@@ -12,7 +13,7 @@ export async function validateAuth(): Promise<AuthUser | null> {
     try {
         const cookieStore = await cookies();
         const accessToken = cookieStore.get('accessToken');
-        
+
         if (!accessToken) {
             return null;
         }
