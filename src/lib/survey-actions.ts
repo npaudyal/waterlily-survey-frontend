@@ -14,8 +14,9 @@ export async function getActiveSurvey() {
             return { error: 'Failed to get active survey' };
         }
 
-        const data = await response.json();
-        return { data };
+        const result = await response.json();
+        const survey = result.data && result.data[0] ? result.data[0] : null;
+        return { data: survey };
     } catch (error) {
         console.error('Failed to get survey data:', error);
         return { error: 'Failed to get survey data' };
@@ -28,7 +29,7 @@ export async function submitSurvey(
 ) {
     try {
         const cookieStore = await cookies();
-        
+
         const response = await fetch(`${API_URL}/survey/submit`, {
             method: 'POST',
             headers: {
@@ -54,7 +55,7 @@ export async function submitSurvey(
 export async function getUserSubmission() {
     try {
         const cookieStore = await cookies();
-        
+
         const response = await fetch(`${API_URL}/survey/submission`, {
             headers: {
                 'Cookie': cookieStore.toString()
@@ -67,8 +68,9 @@ export async function getUserSubmission() {
             return { error: 'Unable to load submission' }
         }
 
-        const data = await response.json();
-        return { data };
+        const result = await response.json();
+        const submission = result.data && result.data[0] ? result.data[0] : null;
+        return { data: submission };
     }
     catch (error) {
         console.error('Error fetching user submission:', error);
