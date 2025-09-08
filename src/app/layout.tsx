@@ -14,6 +14,9 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Health Survey",
   description: "Health Survey App",
+  icons: {
+    icon: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({

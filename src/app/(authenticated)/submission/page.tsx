@@ -13,7 +13,7 @@ import {
 } from '@heroicons/react/24/outline';
 
 export default function SubmissionPage() {
-    const { data: submissionData, isLoading, error } = useQuery({
+    const { data: submissionData, isLoading } = useQuery({
         queryKey: ['userSubmission'],
         queryFn: async () => {
             const result = await getUserSubmission();
