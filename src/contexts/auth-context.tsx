@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 
 interface User {
@@ -50,7 +50,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
     };
 
-    const refreshAuth = async () => {
+    const refreshAuth = useCallback(async () => {
         try {
             const response = await fetch(`${API_URL}/auth/refresh`, {
                 method: 'POST',
@@ -66,7 +66,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             console.error('Refresh error:', error);
             setUser(null);
         }
-    };
+    }, []);
 
     useEffect(() => {
         const initAuth = async () => {
@@ -78,7 +78,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         };
 
         initAuth();
-    }, []);
+    }, [refreshAuth]);
 
     const login = async (email: string, password: string) => {
         try {

@@ -46,7 +46,7 @@ export default function SubmissionPage() {
                                 </h2>
 
                                 <p className="text-lg text-gray-600 mb-8 max-w-md mx-auto">
-                                    Once you complete your first health survey, you'll be able to view and manage
+                                    Once you complete your first health survey, you&apos;ll be able to view and manage
                                     all your responses right here.
                                 </p>
 

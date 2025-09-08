@@ -1,13 +1,26 @@
 import { CheckCircleIcon, DocumentTextIcon, CalendarDaysIcon } from '@heroicons/react/24/outline';
+import { SurveySubmission, SurveyAnswer } from '@/types/survey';
 
 interface SubmissionDetailsProps {
-    submission: any;
+    submission: SurveySubmission;
+}
+
+interface AnswerWithQuestion extends SurveyAnswer {
+    id?: string;
+    question?: {
+        text: string;
+        type: string;
+        required: boolean;
+        section?: {
+            title: string;
+        };
+    };
 }
 
 export default function SubmissionDetails({ submission }: SubmissionDetailsProps) {
-    const answersBySection: { [key: string]: any[] } = {};
+    const answersBySection: { [key: string]: AnswerWithQuestion[] } = {};
 
-    submission.answers?.forEach((answer: any) => {
+    submission.answers?.forEach((answer: AnswerWithQuestion) => {
         const sectionTitle = answer.question?.section?.title || 'General Information';
         if (!answersBySection[sectionTitle]) {
             answersBySection[sectionTitle] = [];
@@ -15,7 +28,7 @@ export default function SubmissionDetails({ submission }: SubmissionDetailsProps
         answersBySection[sectionTitle].push(answer);
     });
 
-    const formatValue = (value: any, type?: string) => {
+    const formatValue = (value: string | string[] | number | undefined, type?: string) => {
         if (value === null || value === undefined || value === '') {
             return <span className="text-gray-400 italic">Not provided</span>;
         }
@@ -41,7 +54,8 @@ export default function SubmissionDetails({ submission }: SubmissionDetailsProps
         }
 
         if (type === 'currency' && value) {
-            return `$${parseFloat(value).toFixed(2)}`;
+            const numValue = typeof value === 'number' ? value : parseFloat(value.toString());
+            return `$${numValue.toFixed(2)}`;
         }
 
         return value.toString();
@@ -56,7 +70,7 @@ export default function SubmissionDetails({ submission }: SubmissionDetailsProps
                             <div className="flex items-center mb-2">
                                 <DocumentTextIcon className="h-6 w-6 text-blue-600 mr-2" />
                                 <h2 className="text-2xl font-bold text-gray-900">
-                                    {submission.survey?.name || 'Health Assessment Survey'}
+                                    {submission.survey?.title || 'Health Assessment Survey'}
                                 </h2>
                             </div>
                             <p className="text-sm text-gray-600">
@@ -94,7 +108,7 @@ export default function SubmissionDetails({ submission }: SubmissionDetailsProps
                                 </div>
 
                                 <div className="space-y-4 pl-11">
-                                    {answers.map((answer: any, index: number) => (
+                                    {answers.map((answer: AnswerWithQuestion, index: number) => (
                                         <div key={answer.id} className="group">
                                             <div className="flex items-start">
                                                 <div className="flex-shrink-0 w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center text-xs text-gray-500 mt-0.5">

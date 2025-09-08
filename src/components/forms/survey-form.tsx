@@ -6,22 +6,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import SurveySection from './survey-section';
 import { FormLoading } from '@/components/ui/loading';
 import { ArrowLeftIcon, ArrowRightIcon, CheckIcon } from '@heroicons/react/24/outline';
-
-interface Survey {
-    id: string;
-    name: string;
-    sections: {
-        id: string;
-        title: string;
-        questions: {
-            id: string;
-            text: string;
-            type: string;
-            required: boolean;
-            options?: any;
-        }[];
-    }[];
-}
+import { Survey, SurveyAnswer } from '@/types/survey';
 
 interface SurveyFormProps {
     survey: Survey;
@@ -31,7 +16,7 @@ export default function SurveyForm({ survey }: SurveyFormProps) {
     const router = useRouter();
     const queryClient = useQueryClient();
     const [currentSection, setCurrentSection] = useState(0);
-    const [answers, setAnswers] = useState<Record<string, any>>({});
+    const [answers, setAnswers] = useState<Record<string, string | string[] | number>>({});
     const [error, setError] = useState('');
 
     const totalSections = survey.sections.length;
@@ -40,7 +25,7 @@ export default function SurveyForm({ survey }: SurveyFormProps) {
     const currentSectionData = survey.sections[currentSection];
 
     const submitMutation = useMutation({
-        mutationFn: async (data: { surveyId: string; answers: any[] }) => {
+        mutationFn: async (data: { surveyId: string; answers: SurveyAnswer[] }) => {
             const result = await submitSurvey(data.surveyId, data.answers);
             if (!result.success) {
                 throw new Error(result.error || 'Failed to submit survey');
@@ -79,7 +64,7 @@ export default function SurveyForm({ survey }: SurveyFormProps) {
 
     const handleNext = () => {
         if (!validateCurrentSection()) return;
-        
+
         setError('');
         if (!isLastSection) {
             setCurrentSection(currentSection + 1);
@@ -111,7 +96,7 @@ export default function SurveyForm({ survey }: SurveyFormProps) {
         });
     };
 
-    const handleAnswerChange = (questionId: string, value: any) => {
+    const handleAnswerChange = (questionId: string, value: string | string[] | number) => {
         setAnswers(prev => ({
             ...prev,
             [questionId]: value

@@ -1,6 +1,7 @@
 'use server';
 
 import { cookies } from 'next/headers';
+import { SurveyAnswer } from '@/types/survey';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
 
@@ -25,7 +26,7 @@ export async function getActiveSurvey() {
 
 export async function submitSurvey(
     surveyId: string,
-    answers: any
+    answers: SurveyAnswer[]
 ) {
     try {
         const cookieStore = await cookies();

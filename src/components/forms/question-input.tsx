@@ -1,7 +1,25 @@
+import { SurveyQuestion } from '@/types/survey';
+
+interface QuestionOption {
+    value: string;
+    label: string;
+}
+
 interface InputProps {
-    question: any;
-    value: any;
-    onChange: (value: any) => void;
+    question: SurveyQuestion & {
+        options?: {
+            min?: number;
+            max?: number;
+            step?: number;
+            rows?: number;
+            placeholder?: string;
+            choices?: QuestionOption[];
+            minLabel?: string;
+            maxLabel?: string;
+        };
+    };
+    value: string | string[] | number | undefined;
+    onChange: (value: string | string[] | number) => void;
 }
 
 const inputClasses = "w-full px-4 py-3 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 placeholder-gray-400";
@@ -80,7 +98,7 @@ export function SelectInput({ question, value, onChange }: InputProps) {
                 className={`${inputClasses} appearance-none pr-10 cursor-pointer`}
             >
                 <option value="">Choose an option...</option>
-                {options.map((option: any) => (
+                {options.map((option: QuestionOption) => (
                     <option key={option.value} value={option.value}>
                         {option.label}
                     </option>
@@ -100,7 +118,7 @@ export function RadioInput({ question, value, onChange }: InputProps) {
 
     return (
         <div className="space-y-2">
-            {options.map((option: any) => (
+            {options.map((option: QuestionOption) => (
                 <label
                     key={option.value}
                     className={`
@@ -130,7 +148,7 @@ export function RadioInput({ question, value, onChange }: InputProps) {
 
 export function CheckboxInput({ question, value, onChange }: InputProps) {
     const options = question.options?.choices || [];
-    const selectedValues = value || [];
+    const selectedValues = Array.isArray(value) ? value : [];
 
     const handleCheckboxChange = (optionValue: string, checked: boolean) => {
         if (checked) {
@@ -142,7 +160,7 @@ export function CheckboxInput({ question, value, onChange }: InputProps) {
 
     return (
         <div className="space-y-2">
-            {options.map((option: any) => (
+            {options.map((option: QuestionOption) => (
                 <label
                     key={option.value}
                     className={`
@@ -174,7 +192,7 @@ export function ScaleInput({ question, value, onChange }: InputProps) {
     const max = question.options?.max || 10;
     const minLabel = question.options?.minLabel || 'Minimum';
     const maxLabel = question.options?.maxLabel || 'Maximum';
-    const currentValue = value || min;
+    const currentValue = typeof value === 'number' ? value : min;
 
     const scales = [];
     for (let i = min; i <= max; i++) {

@@ -1,21 +1,7 @@
 import { TextInput, SelectInput, RadioInput, CheckboxInput, TextareaInput, NumberInput, ScaleInput } from '@/components/forms/question-input'
+import { SurveyQuestionProps } from '@/types/survey';
 
-interface Question {
-    id: string;
-    text: string;
-    type: string;
-    required: boolean;
-    options?: any;
-}
-
-interface SurveyQuestionProps {
-    question: Question;
-    value: any;
-    onChange: (value: any) => void;
-    questionNumber?: number;
-}
-
-export default function SurveyQuestion({ question, value, onChange, questionNumber }: SurveyQuestionProps) {
+export default function SurveyQuestion({ question, value, onChange }: SurveyQuestionProps) {
     const renderInput = () => {
         const props = { question, value, onChange };
 
