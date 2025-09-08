@@ -1,4 +1,3 @@
-import Navbar from "@/components/layout/Navbar";
 import { validateAuth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 
@@ -14,8 +13,7 @@ export default async function RootLayout({
     }
 
     return (
-        <div className="min-h-screen bg-gray-100">
-            <Navbar />
+        <div className="min-h-screen">
             {children}
         </div>
     );

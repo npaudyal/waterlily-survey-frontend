@@ -1,9 +1,28 @@
+'use client';
+
 import SurveyForm from "@/components/forms/survey-form";
 import { Alert } from "@/components/ui/alert";
 import { getActiveSurvey } from "@/lib/survey-actions";
+import { PageLoading } from '@/components/ui/loading';
+import { useQuery } from '@tanstack/react-query';
 
-export default async function SurveyPage() {
-    const { data: survey, error } = await getActiveSurvey();
+export default function SurveyPage() {
+    const { data: surveyData, isLoading, error } = useQuery({
+        queryKey: ['activeSurvey'],
+        queryFn: async () => {
+            const result = await getActiveSurvey();
+            if (result.error) {
+                throw new Error(result.error);
+            }
+            return result;
+        },
+    });
+
+    const survey = surveyData?.data;
+
+    if (isLoading) {
+        return <PageLoading text="Loading your survey..." />;
+    }
 
     if (error || !survey) {
         return (
@@ -16,17 +35,11 @@ export default async function SurveyPage() {
                         There are curently no active survey to complete.
                     </p>
 
-                    {error && <Alert variant="error" message={error} />}
+                    {error && <Alert variant="error" message={error.message} />}
                 </div>
             </div>
         );
     }
 
-    return (
-        <div className="min-h-screen bg-gray-100 py-8">
-            <div className="max-w-4xl mx-auto px-4">
-                <SurveyForm survey={survey} />
-            </div>
-        </div>
-    )
+    return <SurveyForm survey={survey} />;
 }

@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { submitSurvey } from '@/lib/survey-actions';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import SurveySection from './survey-section';
 import { FormLoading } from '@/components/ui/loading';
 import { ArrowLeftIcon, ArrowRightIcon, CheckIcon } from '@heroicons/react/24/outline';
@@ -28,15 +29,35 @@ interface SurveyFormProps {
 
 export default function SurveyForm({ survey }: SurveyFormProps) {
     const router = useRouter();
+    const queryClient = useQueryClient();
     const [currentSection, setCurrentSection] = useState(0);
     const [answers, setAnswers] = useState<Record<string, any>>({});
     const [error, setError] = useState('');
-    const [loading, setLoading] = useState(false);
 
     const totalSections = survey.sections.length;
     const isLastSection = currentSection === totalSections - 1;
     const isFirstSection = currentSection === 0;
     const currentSectionData = survey.sections[currentSection];
+
+    const submitMutation = useMutation({
+        mutationFn: async (data: { surveyId: string; answers: any[] }) => {
+            const result = await submitSurvey(data.surveyId, data.answers);
+            if (!result.success) {
+                throw new Error(result.error || 'Failed to submit survey');
+            }
+            return result;
+        },
+        onSuccess: () => {
+            // Invalidate and refetch user submission and dashboard data
+            queryClient.invalidateQueries({ queryKey: ['userSubmission'] });
+            queryClient.invalidateQueries({ queryKey: ['activeSurvey'] });
+            queryClient.invalidateQueries({ queryKey: ['profile'] });
+            router.push('/submission');
+        },
+        onError: (error: Error) => {
+            setError(error.message);
+        }
+    });
 
     const validateCurrentSection = () => {
         const section = survey.sections[currentSection];
@@ -77,23 +98,17 @@ export default function SurveyForm({ survey }: SurveyFormProps) {
     const handleSubmit = async () => {
         if (!validateCurrentSection()) return;
 
-        setLoading(true);
         setError('');
 
-        // Transform answers object to array format expected by backend
         const answersArray = Object.entries(answers).map(([questionId, value]) => ({
             questionId,
             value
         }));
 
-        const result = await submitSurvey(survey.id, answersArray);
-
-        if (result.success) {
-            router.push('/submission');
-        } else {
-            setError(result.error || 'Failed to submit survey');
-            setLoading(false);
-        }
+        submitMutation.mutate({
+            surveyId: survey.id,
+            answers: answersArray
+        });
     };
 
     const handleAnswerChange = (questionId: string, value: any) => {
