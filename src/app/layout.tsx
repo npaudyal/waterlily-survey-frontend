@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/contexts/auth-context";
+import QueryProvider from "@/components/providers/query-provider";
 import Navbar from "@/components/layout/Navbar";
 
 const inter = Inter({
@@ -11,8 +12,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Waterlily Health Survey",
-  description: "Health Survey App by Waterlily",
+  title: "Health Survey",
+  description: "Health Survey App",
 };
 
 export default function RootLayout({
@@ -23,10 +24,12 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.variable}>
       <body className={`${inter.className} antialiased`}>
-        <AuthProvider>
-          <Navbar />
-          {children}
-        </AuthProvider>
+        <QueryProvider>
+          <AuthProvider>
+            <Navbar />
+            {children}
+          </AuthProvider>
+        </QueryProvider>
       </body>
     </html>
   );

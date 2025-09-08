@@ -12,7 +12,33 @@ const navigation = [
 
 export default function Navbar() {
     const pathname = usePathname();
-    const { user, logout } = useAuth();
+    const { user, loading, logout } = useAuth();
+
+    const isAuthenticated = () => {
+        return !!user;
+    };
+
+    if (loading) {
+        return (
+            <nav className="sticky top-0 z-50 w-full bg-transparent">
+                <div className="mx-auto max-w-7xl px-6 py-4 bg-gradient-to-br from-amber-50/30 via-white to-blue-50/30">
+                    <div className="relative">
+                        <div className="border-2 border-dashed border-gray-300 rounded-2xl px-6 py-3">
+                            <div className="flex h-12 items-center justify-between">
+                                <div className="flex items-center">
+                                    <div className="flex flex-col leading-tight">
+                                        <span className="text-2xl font-black text-gray-900 tracking-tight">Health</span>
+                                        <span className="text-2xl font-black text-blue-600 tracking-tight -mt-1">Survey</span>
+                                    </div>
+                                </div>
+                                <div className="flex-1"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        );
+    }
 
     const handleLogout = async () => {
         await logout();
@@ -25,20 +51,15 @@ export default function Navbar() {
                     <div className="border-2 border-dashed border-gray-300 rounded-2xl px-6 py-3">
                         <div className="flex h-12 items-center justify-between">
                             <div className="flex items-center">
-                                <Link href={user ? "/dashboard" : "/"} className="group">
-                                    <div className="relative px-4 py-2 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105">
-                                        <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                                        <div className="relative flex items-center space-x-2">
-                                            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                            </svg>
-                                            <span className="text-lg font-bold text-white tracking-tight">Health Survey App</span>
-                                        </div>
+                                <Link href={isAuthenticated() ? "/dashboard" : "/"} className="group">
+                                    <div className="flex flex-col leading-tight">
+                                        <span className="text-2xl font-black text-gray-900 tracking-tight">Health</span>
+                                        <span className="text-2xl font-black text-blue-600 tracking-tight -mt-1">Survey</span>
                                     </div>
                                 </Link>
                             </div>
 
-                            {user ? (
+                            {isAuthenticated() ? (
                                 <>
                                     <div className="hidden md:flex items-center space-x-8">
                                         {navigation.map((item) => {
@@ -48,9 +69,9 @@ export default function Navbar() {
                                                     key={item.name}
                                                     href={item.href}
                                                     className={`
-                                                        text-base font-medium transition-colors
+                                                        text-base font-medium transition-all relative
                                                         ${isActive
-                                                            ? 'text-gray-900'
+                                                            ? 'text-blue-600 after:absolute after:bottom-[-2px] after:left-0 after:right-0 after:h-[2px] after:bg-blue-600'
                                                             : 'text-gray-700 hover:text-gray-900'
                                                         }
                                                     `}
@@ -66,7 +87,7 @@ export default function Navbar() {
                                             <MenuButton className="flex items-center space-x-2 px-3 py-1.5 rounded-lg hover:bg-gray-50 transition-colors">
                                                 <UserCircleIcon className="h-6 w-6 text-gray-600" />
                                                 <span className="hidden sm:block text-sm font-medium text-gray-700">
-                                                    {user?.email?.split('@')[0]}
+                                                    {user?.name || user?.email?.split('@')[0]}
                                                 </span>
                                                 <ChevronDownIcon className="h-4 w-4 text-gray-500" />
                                             </MenuButton>
@@ -101,13 +122,13 @@ export default function Navbar() {
 
                                     <div className="flex items-center space-x-3">
                                         <Link
-                                            href="/auth/login"
+                                            href="/login"
                                             className="px-5 py-2 text-base font-medium text-gray-700 border border-gray-300 rounded-lg hover:border-gray-400 transition-colors"
                                         >
                                             Log In
                                         </Link>
                                         <Link
-                                            href="/auth/register"
+                                            href="/register"
                                             className="inline-flex items-center px-5 py-2 bg-green-500 text-white text-base font-medium rounded-lg hover:bg-green-600 transition-colors"
                                         >
                                             It&apos;s Free → Try now!
@@ -117,7 +138,7 @@ export default function Navbar() {
                             )}
                         </div>
 
-                        {user && (
+                        {isAuthenticated() && (
                             <div className="md:hidden border-t border-gray-200 mt-3 pt-3">
                                 <div className="flex space-x-2">
                                     {navigation.map((item) => {
@@ -129,8 +150,8 @@ export default function Navbar() {
                                                 className={`
                                                     flex-1 px-3 py-2 rounded-lg text-sm font-medium text-center transition-all
                                                     ${isActive
-                                                        ? 'bg-gray-100 text-gray-900'
-                                                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                                                        ? 'bg-blue-100 text-blue-700 border border-blue-200'
+                                                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50 border border-transparent'
                                                     }
                                                 `}
                                             >

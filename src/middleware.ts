@@ -6,15 +6,24 @@ const authRoutes = ['/login', '/register'];
 
 export function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
-    const accessToken = request.cookies.get('accessToken');
+    const accessToken = request.cookies.get('accessToken')?.value;
+    const refreshToken = request.cookies.get('refreshToken')?.value;
     const isAuthRoute = authRoutes.some(route => pathname.startsWith(route));
     const isPublicRoute = publicRoutes.some(route => pathname === route || pathname.startsWith(`${route}/`));
 
-    if (accessToken && isAuthRoute) {
+    const hasAuthTokens = accessToken || refreshToken;
+
+    if (hasAuthTokens && isAuthRoute) {
         return NextResponse.redirect(new URL('/dashboard', request.url));
     }
 
-    if (!accessToken && !isPublicRoute) {
+    // If authenticated and accessing root, redirect to dashboard
+    if (hasAuthTokens && pathname === '/') {
+        return NextResponse.redirect(new URL('/dashboard', request.url));
+    }
+
+    // If not authenticated and trying to access protected routes
+    if (!hasAuthTokens && !isPublicRoute) {
         const loginUrl = new URL('/login', request.url);
         loginUrl.searchParams.set('from', pathname);
         return NextResponse.redirect(loginUrl);

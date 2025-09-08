@@ -39,6 +39,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 setUser({
                     id: data.userId,
                     email: data.email,
+                    name: data.name,
                 });
                 return true;
             }
