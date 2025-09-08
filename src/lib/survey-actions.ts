@@ -1,6 +1,3 @@
-'use server';
-
-import { cookies } from 'next/headers';
 import { SurveyAnswer } from '@/types/survey';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
@@ -29,14 +26,12 @@ export async function submitSurvey(
     answers: SurveyAnswer[]
 ) {
     try {
-        const cookieStore = await cookies();
-
         const response = await fetch(`${API_URL}/survey/submit`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Cookie': cookieStore.toString()
             },
+            credentials: 'include',
             body: JSON.stringify({ surveyId, answers })
         });
 
@@ -55,12 +50,8 @@ export async function submitSurvey(
 
 export async function getUserSubmission() {
     try {
-        const cookieStore = await cookies();
-
         const response = await fetch(`${API_URL}/survey/submission`, {
-            headers: {
-                'Cookie': cookieStore.toString()
-            },
+            credentials: 'include',
         });
 
         if (response.status === 404) return { data: null };
