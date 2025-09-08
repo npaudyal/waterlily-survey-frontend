@@ -32,7 +32,7 @@ export default function LoginPage() {
     return (
         <>
             {loading && <FormLoading text="Signing you in..." />}
-            <div className='min-h-screen relative flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-cyan-50 overflow-hidden'>
+            <div className='min-h-screen relative flex items-center justify-center bg-gradient-to-br from-amber-50/30 via-white to-blue-50/30 overflow-hidden'>
                 <div className="absolute inset-0 -z-10">
                     <div className="absolute top-10 left-10 w-72 h-72 bg-blue-200 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-pulse"></div>
                     <div className="absolute top-1/3 right-10 w-96 h-96 bg-cyan-200 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-pulse" style={{ animationDelay: '2s' }}></div>
