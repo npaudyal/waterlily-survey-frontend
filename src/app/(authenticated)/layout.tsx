@@ -1,15 +1,33 @@
-import { validateAuth } from "@/lib/auth";
-import { redirect } from "next/navigation";
+'use client';
 
-export default async function RootLayout({
+import { useAuth } from "@/contexts/auth-context";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+
+export default function RootLayout({
     children,
 }: Readonly<{
     children: React.ReactNode;
 }>) {
-    const user = await validateAuth();
+    const { user, loading } = useAuth();
+    const router = useRouter();
+
+    useEffect(() => {
+        if (!loading && !user) {
+            router.push('/login');
+        }
+    }, [user, loading, router]);
+
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="text-lg">Loading...</div>
+            </div>
+        );
+    }
 
     if (!user) {
-        redirect('/login');
+        return null;
     }
 
     return (

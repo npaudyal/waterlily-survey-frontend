@@ -17,18 +17,9 @@ export function middleware(request: NextRequest) {
         return NextResponse.redirect(new URL('/dashboard', request.url));
     }
 
-    // If authenticated and accessing root, redirect to dashboard
     if (hasAuthTokens && pathname === '/') {
         return NextResponse.redirect(new URL('/dashboard', request.url));
     }
-
-    // If not authenticated and trying to access protected routes
-    if (!hasAuthTokens && !isPublicRoute) {
-        const loginUrl = new URL('/login', request.url);
-        loginUrl.searchParams.set('from', pathname);
-        return NextResponse.redirect(loginUrl);
-    }
-
     return NextResponse.next();
 }
 
